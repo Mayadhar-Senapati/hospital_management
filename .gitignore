@@ -1,0 +1,19 @@
+﻿# Java
+*.class
+*.jar
+*.war
+target/
+*.log
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.eclipse/
+
+# Docker
+*.env
+
+# OS
+.DS_Store
+Thumbs.db
