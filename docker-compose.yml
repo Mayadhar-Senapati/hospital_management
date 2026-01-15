@@ -1,0 +1,73 @@
+version: "3.9"
+
+services:
+
+  postgres-db:
+    image: postgres:16.11-bookworm
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
+    networks:
+      - hospital_service
+
+  pgadmin:
+    image: dpage/pgadmin4:9.11
+    container_name: pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@hospital.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "True"
+    ports:
+      - "5050:80"
+    volumes:
+      - ./pgadmin/servers.json:/pgadmin4/servers.json
+    depends_on:
+      - postgres-db
+    networks:
+      - hospital_service
+
+  doctor-service:
+    image: doctor-service:1.0
+    container_name: doctor-service
+    restart: always
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/doctor_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      - postgres-db
+    networks:
+      - hospital_service
+
+  patient-service:
+    image: patient-service:1.0
+    container_name: patient-service
+    restart: always
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/patient_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      - postgres-db
+    networks:
+      - hospital_service
+
+networks:
+  hospital_service:
+    driver: bridge
+
+volumes:
+  postgres_data:
