@@ -36,6 +36,7 @@ services:
       - hospital_service
 
   doctor-service:
+    build: ./doctor-service
     image: doctor-service:1.0
     container_name: doctor-service
     restart: always
@@ -51,6 +52,7 @@ services:
       - hospital_service
 
   patient-service:
+    build: ./patient-service
     image: patient-service:1.0
     container_name: patient-service
     restart: always
