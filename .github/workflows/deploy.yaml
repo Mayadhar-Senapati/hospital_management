@@ -16,7 +16,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-      - scripts:
+      - script:
           cd /home/ubuntu/hospital_management
           git pull 
           docker compose up -d --build
